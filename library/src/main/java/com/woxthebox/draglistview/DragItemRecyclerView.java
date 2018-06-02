@@ -432,7 +432,7 @@ public class DragItemRecyclerView extends RecyclerView implements AutoScroller.A
             public void run() {
                 // Sometimes the holder will be null if a holder has not yet been set for the position
                 final RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(mDragItemPosition);
-                if (holder != null) {
+                if (holder != null && getItemAnimator() != null) {
                     getItemAnimator().endAnimation(holder);
                     mDragItem.endDrag(holder.itemView, new AnimatorListenerAdapter() {
                         @Override
@@ -493,12 +493,15 @@ public class DragItemRecyclerView extends RecyclerView implements AutoScroller.A
         mDragItemPosition = pos;
 
         mHoldChangePosition = true;
+
+        long millis = getItemAnimator() != null ? getItemAnimator().getMoveDuration() : 0;
+
         postDelayed(new Runnable() {
             @Override
             public void run() {
                 mHoldChangePosition = false;
             }
-        }, getItemAnimator().getMoveDuration());
+        }, millis);
 
         invalidate();
     }
